@@ -10,8 +10,8 @@ import javax.swing.JOptionPane;
 import controller.Controlador;
 
 /**
- * @author Emerson Demetrio
- * @author Sérgio Zarth
+ * @author Emerson Demetrio 
+ * @author Felipe Bortoli 
  * @version 2015.1
  */
 
