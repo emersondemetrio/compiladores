@@ -1,17 +1,23 @@
 package view;
 
+import gals.AnalysisError;
+import gals.LexicalError;
+import gals.SemanticError;
+import gals.SyntaticError;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import controller.Controlador;
 
 /**
- * @author Emerson Demetrio 
- * @author Felipe Bortoli 
+ * @author Emerson Demetrio
+ * @author Felipe Bortoli
  * @version 2015.1
  */
 
@@ -56,14 +62,36 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 
 	private void menuItemLexicoActionPerformed(java.awt.event.ActionEvent evt) {
 		// c.loadCode(textAreaCodigo.getText());
-		
-		//msg("menuItemLexicoActionPerformed");
-		c.analiseLexica(textAreaCodigo.getText());
+
+		// msg("menuItemLexicoActionPerformed");
+		try {
+			c.analiseLexica(textAreaCodigo.getText());
+			msg("Nenhum erro léxico foi encontrado");
+			// JOptionPane.INFORMATION_MESSAGE);
+		} catch (LexicalError e) {
+			msg("Ocorreu um erro sintático na posição " + e.getPosition());
+			this.textAreaCodigo.setCaretPosition(e.getPosition());
+			e.printStackTrace();
+		}
 	}
 
 	private void menuItemSintaticoActionPerformed(java.awt.event.ActionEvent evt) {
-		//msg("menuItemSintaticoActionPerformed");
-		c.analiseLexicaSemantica(textAreaCodigo.getText());
+		// msg("menuItemSintaticoActionPerformed");
+		try {
+			c.analiseLexicaSintatica(textAreaCodigo.getText());
+			msg("Nenhum erro sintático foi encontrado");
+		} catch (LexicalError le) {
+			this.textAreaCodigo.setCaretPosition(le.getPosition());
+			JOptionPane.showMessageDialog(null, le.getMessage(), "ERRO LÉXICO",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (SyntaticError se) {
+			this.textAreaCodigo.setCaretPosition(se.getPosition());
+			JOptionPane.showMessageDialog(null, se.getMessage(),
+					"ERRO SINTÁTICO", JOptionPane.ERROR_MESSAGE);
+		} catch (AnalysisError ae) {
+			this.textAreaCodigo.setCaretPosition(ae.getPosition());
+			ae.printStackTrace();
+		}
 	}
 
 	private void menuItemSalvarComoActionPerformed(
