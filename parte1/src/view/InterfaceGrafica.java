@@ -62,7 +62,8 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 	}
 
 	private void menuItemSintaticoActionPerformed(java.awt.event.ActionEvent evt) {
-		msg("menuItemSintaticoActionPerformed");
+		//msg("menuItemSintaticoActionPerformed");
+		c.analiseLexicaSemantica(textAreaCodigo.getText());
 	}
 
 	private void menuItemSalvarComoActionPerformed(

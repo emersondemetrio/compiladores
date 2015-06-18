@@ -1,4 +1,5 @@
 package gals;
+
 public interface Constants extends ScannerConstants, ParserConstants
 {
     int EPSILON  = 0;
@@ -41,27 +42,26 @@ public interface Constants extends ScannerConstants, ParserConstants
     int t_TOKEN_36 = 36; //">="
     int t_num_int = 37;
     int t_num_real = 38;
-    int t_CL = 39;
-    int t_comentarioLinha = 40;
-    int t_comentarioBloco = 41;
-    int t_TOKEN_42 = 42; //";"
-    int t_TOKEN_43 = 43; //","
-    int t_TOKEN_44 = 44; //"."
-    int t_TOKEN_45 = 45; //">"
-    int t_TOKEN_46 = 46; //"<"
-    int t_TOKEN_47 = 47; //"="
-    int t_TOKEN_48 = 48; //"("
-    int t_TOKEN_49 = 49; //")"
-    int t_TOKEN_50 = 50; //"["
-    int t_TOKEN_51 = 51; //"]"
-    int t_TOKEN_52 = 52; //"+"
-    int t_TOKEN_53 = 53; //"-"
-    int t_TOKEN_54 = 54; //"*"
-    int t_TOKEN_55 = 55; //"/"
-    int t_TOKEN_56 = 56; //":"
-    int t_TOKEN_57 = 57; //":="
-    int t_TOKEN_58 = 58; //".."
-    int t_TOKEN_59 = 59; //"<>"
-    int t_TOKEN_60 = 60; //"<="
+    int t_comentarioLinha = 39;
+    int t_comentarioBloco = 40;
+    int t_TOKEN_41 = 41; //";"
+    int t_TOKEN_42 = 42; //","
+    int t_TOKEN_43 = 43; //"."
+    int t_TOKEN_44 = 44; //">"
+    int t_TOKEN_45 = 45; //"<"
+    int t_TOKEN_46 = 46; //"="
+    int t_TOKEN_47 = 47; //"("
+    int t_TOKEN_48 = 48; //")"
+    int t_TOKEN_49 = 49; //"["
+    int t_TOKEN_50 = 50; //"]"
+    int t_TOKEN_51 = 51; //"+"
+    int t_TOKEN_52 = 52; //"-"
+    int t_TOKEN_53 = 53; //"*"
+    int t_TOKEN_54 = 54; //"/"
+    int t_TOKEN_55 = 55; //":"
+    int t_TOKEN_56 = 56; //":="
+    int t_TOKEN_57 = 57; //".."
+    int t_TOKEN_58 = 58; //"<>"
+    int t_TOKEN_59 = 59; //"<="
 
 }
