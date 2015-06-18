@@ -26,6 +26,8 @@ public class Controlador {
 	public void setPosicaoErro(int posicaoErro) {
 		this.posicaoErro = posicaoErro;
 	}
+	
+	
 
 	public void analiseLexica(String texto) throws LexicalError {
 
