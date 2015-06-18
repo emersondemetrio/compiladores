@@ -56,8 +56,9 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 
 	private void menuItemLexicoActionPerformed(java.awt.event.ActionEvent evt) {
 		// c.loadCode(textAreaCodigo.getText());
-
-		msg("menuItemLexicoActionPerformed");
+		
+		//msg("menuItemLexicoActionPerformed");
+		c.analiseLexica(textAreaCodigo.getText());
 	}
 
 	private void menuItemSintaticoActionPerformed(java.awt.event.ActionEvent evt) {
