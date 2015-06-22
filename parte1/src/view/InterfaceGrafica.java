@@ -69,8 +69,9 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 			msg("Nenhum erro léxico foi encontrado");
 			// JOptionPane.INFORMATION_MESSAGE);
 		} catch (LexicalError e) {
-			msg("Ocorreu um erro sintático na posição " + e.getPosition());
 			this.textAreaCodigo.setCaretPosition(e.getPosition());
+			JOptionPane.showMessageDialog(null, e.getMessage(), "ERRO LÉXICO",
+					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 	}
