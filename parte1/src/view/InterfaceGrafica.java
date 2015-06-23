@@ -24,16 +24,38 @@ import controller.Controlador;
 public class InterfaceGrafica extends javax.swing.JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private Controlador c;
+	private Controlador controlador;
 
 	public InterfaceGrafica() {
 		initComponents();
 		setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
-		c = new Controlador();
+		controlador = new Controlador();
 	}
 
-	private static void msg(String s) {
-		JOptionPane.showMessageDialog(null, s);
+	private static void msg(String msg, int tipo) {
+		switch (tipo) {
+		case 0:
+			JOptionPane.showMessageDialog(null, msg, "Mensagem:",
+					JOptionPane.INFORMATION_MESSAGE);
+			break;
+		case 1:
+			// erro lexico:
+			JOptionPane.showMessageDialog(null, msg, "Erro léxico!",
+					JOptionPane.ERROR_MESSAGE);
+			break;
+		case 2: // erro sintatico
+			JOptionPane.showMessageDialog(null, msg, "Erro sintático!",
+					JOptionPane.ERROR_MESSAGE);
+			break;
+		case 3: // erro semântico
+			JOptionPane.showMessageDialog(null, msg, "Erro semântico!",
+					JOptionPane.ERROR_MESSAGE);
+			break;
+		default:
+			JOptionPane.showMessageDialog(null, msg, "Aconteceu um erro:",
+					JOptionPane.ERROR_MESSAGE);
+			break;
+		}
 	}
 
 	private void menuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_menuItemAbrirActionPerformed
@@ -56,68 +78,59 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 	}
 
 	private void menuItemSairActionPerformed(java.awt.event.ActionEvent evt) {
-		msg("menuItemSairActionPerformed");
+		msg("menuItemSairActionPerformed", 0);
 		System.exit(0);
 	}
 
 	private void menuItemLexicoActionPerformed(java.awt.event.ActionEvent evt) {
-		// c.loadCode(textAreaCodigo.getText());
-
-		// msg("menuItemLexicoActionPerformed");
 		try {
-			c.analiseLexica(textAreaCodigo.getText());
-			msg("Nenhum erro léxico foi encontrado");
-			// JOptionPane.INFORMATION_MESSAGE);
+			controlador.analiseLexica(textAreaCodigo.getText());
+			msg("Nenhum erro léxico foi encontrado", 0);
 		} catch (LexicalError e) {
 			this.textAreaCodigo.setCaretPosition(e.getPosition());
-			JOptionPane.showMessageDialog(null, e.getMessage(), "ERRO LÉXICO",
-					JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+			msg(e.getMessage() + e.toString(), 1);
 		}
 	}
 
 	private void menuItemSintaticoActionPerformed(java.awt.event.ActionEvent evt) {
-		// msg("menuItemSintaticoActionPerformed");
 		try {
-			c.analiseLexicaSintatica(textAreaCodigo.getText());
-			msg("Nenhum erro sintático foi encontrado");
-		} catch (LexicalError le) {
-			this.textAreaCodigo.setCaretPosition(le.getPosition());
-			JOptionPane.showMessageDialog(null, le.getMessage(), "ERRO LÉXICO",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (SyntaticError se) {
-			this.textAreaCodigo.setCaretPosition(se.getPosition());
-			JOptionPane.showMessageDialog(null, se.getMessage(),
-					"ERRO SINTÁTICO", JOptionPane.ERROR_MESSAGE);
+			controlador.analiseLexicaSintatica(textAreaCodigo.getText());
+			msg("Nenhum erro sintático foi encontrado", 0);
+		} catch (LexicalError lex) {
+			this.textAreaCodigo.setCaretPosition(lex.getPosition());
+			msg(lex.getMessage(), 1);
+		} catch (SyntaticError syn) {
+			this.textAreaCodigo.setCaretPosition(syn.getPosition());
+			msg(syn.getMessage() + syn.toString(), 2);
 		} catch (AnalysisError ae) {
 			this.textAreaCodigo.setCaretPosition(ae.getPosition());
-			ae.printStackTrace();
+			msg(ae.getMessage(), 9);
 		}
 	}
 
 	private void menuItemSalvarComoActionPerformed(
 			java.awt.event.ActionEvent evt) {
-		msg("menuItemSalvarComoActionPerformed");
+		msg("menuItemSalvarComoActionPerformed", 1);
 		frameChooser.setVisible(true);
 
 		frameChooser.setVisible(false);
 	}
 
 	private void menuItemSalvarActionPerformed(java.awt.event.ActionEvent evt) {
-		msg("menuItemSalvarActionPerformed");
+		msg("menuItemSalvarActionPerformed", 1);
 	}
 
 	private void menuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {
-		msg("menuItemSobreActionPerformed");
+		msg("menuItemSobreActionPerformed", 1);
 	}
 
 	private void menuItemDocumentacaoActionPerformed(
 			java.awt.event.ActionEvent evt) {
-		msg("Menu documentacao");
+		msg("Menu documentacao", 1);
 	}
 
 	private void menuItemSemanticoActionPerformed(java.awt.event.ActionEvent evt) {
-		msg("menuItemSemanticoActionPerformed");
+		msg("menuItemSemanticoActionPerformed", 1);
 	}
 
 	private void initComponents() {
