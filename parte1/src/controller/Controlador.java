@@ -16,6 +16,10 @@ public class Controlador {
 
 	}
 
+	private static void log(String msg) {
+		System.out.println("[Controlador.java] " + msg);
+	}
+
 	public void analiseLexica(String texto) throws LexicalError {
 		System.out.println("Analise Lexica");
 		List<Token> allTokens = new ArrayList<Token>();

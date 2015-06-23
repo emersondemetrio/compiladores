@@ -35,7 +35,7 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 	}
 
 	private static void log(String msg) {
-		System.out.println(msg);
+		System.out.println("[InterfaceGrafica.java] " + msg);
 	}
 
 	private static void msg(String msg, String titulo, int tipo) {

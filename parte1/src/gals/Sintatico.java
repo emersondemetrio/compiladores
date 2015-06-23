@@ -53,7 +53,9 @@ public class Sintatico implements Constants {
 			if (pushProduction(x, a))
 				return false;
 			else
-				throw new SyntaticError(PARSER_ERROR[x],
+				throw new SyntaticError(PARSER_ERROR[x] + " [ "
+						+ currentToken.getLexeme() + " ] [ "
+						+ previousToken.getLexeme() + " ] ",
 						currentToken.getPosition());
 		} else // isSemanticAction(x)
 		{
