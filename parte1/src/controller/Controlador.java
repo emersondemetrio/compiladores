@@ -21,6 +21,7 @@ public class Controlador {
 		List<Token> allTokens = new ArrayList<Token>();
 		Lexico lex = new Lexico(texto);
 		Token token;
+
 		while ((token = lex.nextToken()) != null) {
 			allTokens.add(token);
 			System.out.println("Analise Lexica" + token);

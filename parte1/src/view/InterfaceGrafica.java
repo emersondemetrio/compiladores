@@ -2,6 +2,7 @@ package view;
 
 import gals.AnalysisError;
 import gals.LexicalError;
+import gals.ParserConstants;
 import gals.SemanticError;
 import gals.SyntaticError;
 
@@ -25,6 +26,7 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private Controlador controlador;
+	private ParserConstants pc;
 
 	public InterfaceGrafica() {
 		initComponents();
@@ -32,27 +34,30 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 		controlador = new Controlador();
 	}
 
-	private static void msg(String msg, int tipo) {
+	private static void log(String msg) {
+		System.out.println(msg);
+	}
+
+	private static void msg(String msg, String titulo, int tipo) {
 		switch (tipo) {
 		case 0:
-			JOptionPane.showMessageDialog(null, msg, "Mensagem:",
+			JOptionPane.showMessageDialog(null, msg, titulo,
 					JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case 1:
-			// erro lexico:
-			JOptionPane.showMessageDialog(null, msg, "Erro léxico!",
+			JOptionPane.showMessageDialog(null, msg, titulo,
 					JOptionPane.ERROR_MESSAGE);
 			break;
-		case 2: // erro sintatico
-			JOptionPane.showMessageDialog(null, msg, "Erro sintático!",
+		case 2:
+			JOptionPane.showMessageDialog(null, msg, titulo,
 					JOptionPane.ERROR_MESSAGE);
 			break;
-		case 3: // erro semântico
-			JOptionPane.showMessageDialog(null, msg, "Erro semântico!",
+		case 3:
+			JOptionPane.showMessageDialog(null, msg, titulo,
 					JOptionPane.ERROR_MESSAGE);
 			break;
 		default:
-			JOptionPane.showMessageDialog(null, msg, "Aconteceu um erro:",
+			JOptionPane.showMessageDialog(null, msg, titulo,
 					JOptionPane.ERROR_MESSAGE);
 			break;
 		}
@@ -67,70 +72,78 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 				textAreaCodigo.read(new FileReader(file.getAbsolutePath()),
 						null);
 			} catch (IOException ex) {
-				System.out.println("Problem accessing file"
-						+ file.getAbsolutePath());
+				log("Problem accessing file" + file.getAbsolutePath());
 			}
-			// c.setCurrentFile(file.getAbsolutePath());
+
 		} else {
-			System.out.println("File access cancelled by user.");
+			log("File access cancelled by user.");
 		}
 		frameChooser.setVisible(false);
 	}
 
 	private void menuItemSairActionPerformed(java.awt.event.ActionEvent evt) {
-		msg("menuItemSairActionPerformed", 0);
+		log("menuItemSairActionPerformed");
 		System.exit(0);
 	}
 
 	private void menuItemLexicoActionPerformed(java.awt.event.ActionEvent evt) {
 		try {
 			controlador.analiseLexica(textAreaCodigo.getText());
-			msg("Nenhum erro léxico foi encontrado", 0);
+			msg("Nenhum erro léxico foi encontrado", "Mensagem", 0);
 		} catch (LexicalError e) {
 			this.textAreaCodigo.setCaretPosition(e.getPosition());
-			msg(e.getMessage() + e.toString(), 1);
+			msg(e.getMessage(), "Erro Léxico!", 1);
+			log(e.toString());
+			log(pc.PARSER_ERROR[e.getPosition()]);
 		}
 	}
 
 	private void menuItemSintaticoActionPerformed(java.awt.event.ActionEvent evt) {
 		try {
 			controlador.analiseLexicaSintatica(textAreaCodigo.getText());
-			msg("Nenhum erro sintático foi encontrado", 0);
+			msg("Nenhum erro sintático foi encontrado", "Mensagem", 0);
+
 		} catch (LexicalError lex) {
+			log(lex.toString());
 			this.textAreaCodigo.setCaretPosition(lex.getPosition());
-			msg(lex.getMessage(), 1);
+			msg(lex.getMessage(), "Erro Léxico", 1);
+			log(lex.toString());
+
 		} catch (SyntaticError syn) {
 			this.textAreaCodigo.setCaretPosition(syn.getPosition());
-			msg(syn.getMessage() + syn.toString(), 2);
+			msg(syn.getMessage(), "Erro Sintático", 2);
+			log(syn.toString());
+
 		} catch (AnalysisError ae) {
 			this.textAreaCodigo.setCaretPosition(ae.getPosition());
-			msg(ae.getMessage(), 9);
+			msg(ae.getMessage(), "Erro", 9);
+			log(ae.toString());
 		}
+	}
+
+	private void menuItemSemanticoActionPerformed(java.awt.event.ActionEvent evt) {
+		msg("Analise semantica: Nao implementado", "", 9);
 	}
 
 	private void menuItemSalvarComoActionPerformed(
 			java.awt.event.ActionEvent evt) {
-		msg("menuItemSalvarComoActionPerformed", 1);
-		frameChooser.setVisible(true);
+		log("menuItemSalvarComoActionPerformed");
 
+		frameChooser.setVisible(true);
 		frameChooser.setVisible(false);
 	}
 
 	private void menuItemSalvarActionPerformed(java.awt.event.ActionEvent evt) {
-		msg("menuItemSalvarActionPerformed", 1);
+		log("menuItemSalvarActionPerformed");
 	}
 
 	private void menuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {
-		msg("menuItemSobreActionPerformed", 1);
+		msg("menuItemSobreActionPerformed", "Mensagem", 9);
 	}
 
 	private void menuItemDocumentacaoActionPerformed(
 			java.awt.event.ActionEvent evt) {
-		msg("Menu documentacao", 1);
-	}
-
-	private void menuItemSemanticoActionPerformed(java.awt.event.ActionEvent evt) {
-		msg("menuItemSemanticoActionPerformed", 1);
+		msg("Menu documentacao", "Mensagem", 9);
 	}
 
 	private void initComponents() {
