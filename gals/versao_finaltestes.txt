@@ -1,0 +1,66 @@
+programa teste;
+ 
+#variaveis
+
+
+inteiro int1, int2 = 5;  
+inteiro int3, int4, int5 ; 
+inteiro [ 10 ] int6, int7; 
+booleano b1 = falso; 
+booleano b2 = 0;
+booleano b3; 
+caracter char1, char2; 
+caracter char3 = 'x'; 
+caracter [ n ] char4;
+cadeia [20] cad1; 
+cadeia [ n ] cad2; 
+real real1 = 2.5; 
+real[10] real2, real3;
+real real4, real5; 
+
+# metodos
+metodo metodo_1(ref s,t:real;  val c,d:inteiro);	 
+{
+ 	se(s>c)
+	entao
+	retorne 5
+	senao
+	enquanto(s<10)
+  	faca{
+		s := s-(1);
+ 	 	c := c+(1); 
+		real1[c] := d;
+		escreva(c + d - real1);
+
+	}
+			
+
+};
+
+metodo metodo_2 (ref s,t:caracter;  val c,d:booleano): caracter;	 
+{
+   se(c)
+entao{
+  int1 := int1 + 1;
+  cad1[int1] := 'x';
+  retorne cad1
+}
+senao{
+	b1 := verdadeiro;
+	b2 := b1 ou falso;
+	b2 := b1 ou (1 > 2);	
+	b2 := b1 ou c ou d;	
+retorne nome;
+}
+}; 
+
+
+
+{
+metodo_exemplo_3(6.2, real2[2], real3[2], 6);
+ metodo_exemplo_4(cad2[2], char1, verdadeiro, falso);
+}
+
+
+.
+
