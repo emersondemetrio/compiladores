@@ -3,6 +3,7 @@ package controller;
 import gals.LexicalError;
 import gals.Lexico;
 import gals.SemanticError;
+import gals.Semantico;
 import gals.Sintatico;
 import gals.SyntaticError;
 import gals.Token;
@@ -35,7 +36,7 @@ public class Controlador {
 	public void analiseLexicaSintatica(String texto) throws LexicalError,
 			SyntaticError, SemanticError {
 		Sintatico sintatico = new Sintatico();
-		sintatico.parse(new Lexico(texto), null);
+		sintatico.parse(new Lexico(texto), new Semantico());
 	}
 
 	public void analiseSemantica() {

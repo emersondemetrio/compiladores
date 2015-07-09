@@ -13,6 +13,7 @@ Parser = LL
 L : [A-Za-z]
 D : [0-9]
 E : (E|e)(\+|\-)?{D}{D}+
+
 #Tokens
 id: {L}( ({L} | {D}) | @({L} | {D}) | _({L} | {D}) )* | (@( ({L} | {D})+ ( (@ | _)({L} | {D}) )? ) )*
 
@@ -59,9 +60,9 @@ literal = id : "literal"
 : [\r\n\s\t]*		//espaços em branco
 num_int: (\+ | \-)? {D}+ {E}?
 num_real : ({D}+\.{D}* | \.{D}+) {E}?
-CL : '(''|[^'])*' //conferir
-comentarioLinha : #.*	
-comentarioBloco : /\*([^\*/]|/|\*|/\*)*\*/
+literal : '(''|[^'])*' //conferir
+: #.* //comentario linha	
+: /\*([^\*/]|/|\*|/\*)*\*/ //comentario bloco
 
 //simbolos especiais Simples
 ";" 
@@ -84,8 +85,6 @@ comentarioBloco : /\*([^\*/]|/|\*|/\*)*\*/
 ".." 
 "<>" 
 "<="
-
-
 
 
 
@@ -129,12 +128,11 @@ comentarioBloco : /\*([^\*/]|/|\*|/\*)*\*/
 
 <bloco> ::= <dcl_var_const>  <dcl_metodos>  <com_composto>  ;		 	
  
-<dcl_var_const> ::=  <tipo>  <dimensao>  <lid>  <fator_const> ";" <dcl_var_const> 
-                              |   î ;
+<dcl_var_const> ::= <tipo> <dimensao> #102 <lid> #103 <fator_const> #104 ";" <dcl_var_const> | î ;
 
-<tipo> ::=  inteiro | real | booleano | caracter | cadeia "[" <constante> "]";
+<tipo> ::= inteiro #105 | real #106 | booleano #107 | caracter #108 |cadeia "[" <constante> #109 "]";
 
-<dimensao> ::= "["  <constante>  "]"  |   î ;
+<dimensao> ::= #110 "[" <constante> #111 "]" | #112 î ;
 
 <lid> ::= id  <rep_lid>  ;
 
@@ -157,15 +155,15 @@ comentarioBloco : /\*([^\*/]|/|\*|/\*)*\*/
 <com_composto>  ::= "{"   <comando>  <replistacomando>  "}"  ;                             
 
 <replistacomando> ::=   ";"  <comando>  <replistacomando>  |  î ;
-
-<comando> ::= id  <rcomid>
+<comando> ::= id #128 <rcomid>
              |  <com_composto>                                 
-             | se <expressao> entao <comando> <senaoparte> 
-             | enquanto <expressao> faca <comando>                               
-             | leia "(" <lid> ")"                                    
-             | escreva "(" <lista_expr> ")"  
-             | retorne  <expressao>
-	   |  î ;
+             | se <expressao> #129 entao <comando> <senaoparte> 
+             | enquanto <expressao> #129 faca <comando>                               
+             | leia "(" #130 <lid> ")"                                    
+             | escreva "(" #131 <lista_expr> ")"  
+             | retorne  <expressao> #132
+	    |  î ;
+
 
 <senaoparte> ::= senao  <comando>  |  î ;
 
