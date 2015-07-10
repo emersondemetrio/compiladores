@@ -13,8 +13,12 @@ import java.util.List;
 
 public class Controlador {
 
-	public Controlador() {
+	private Lexico analisadorLexico;
+	private Sintatico analisadorSintatico;
+	private Semantico analisadorSemantico;
 
+	public Controlador() {
+		analisadorSintatico = new Sintatico();
 	}
 
 	private static void log(String msg) {
@@ -24,10 +28,10 @@ public class Controlador {
 	public void analiseLexica(String texto) throws LexicalError {
 		System.out.println("Analise Lexica");
 		List<Token> allTokens = new ArrayList<Token>();
-		Lexico lex = new Lexico(texto);
+		analisadorLexico = new Lexico(texto);
 		Token token;
 
-		while ((token = lex.nextToken()) != null) {
+		while ((token = analisadorLexico.nextToken()) != null) {
 			allTokens.add(token);
 			System.out.println("Analise Lexica" + token);
 		}
@@ -35,11 +39,13 @@ public class Controlador {
 
 	public void analiseLexicaSintatica(String texto) throws LexicalError,
 			SyntaticError, SemanticError {
-		Sintatico sintatico = new Sintatico();
-		sintatico.parse(new Lexico(texto), new Semantico());
+		analisadorSintatico.parse(new Lexico(texto), null);
 	}
 
-	public void analiseSemantica() {
-		System.out.println("Nada por aqui.");
+	public void analiseSemantica(String texto) throws LexicalError,
+			SyntaticError, SemanticError {
+		analisadorSemantico = new Semantico();
+		analisadorSintatico.executarSemantico();
+		analisadorSintatico.parse(new Lexico(texto), analisadorSemantico);
 	}
 }

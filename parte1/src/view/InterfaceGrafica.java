@@ -32,6 +32,7 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 		initComponents();
 		setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
 		controlador = new Controlador();
+		textAreaCodigo.setText("programa teste; {} .");
 	}
 
 	private static void log(String msg) {
@@ -122,7 +123,13 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 	}
 
 	private void menuItemSemanticoActionPerformed(java.awt.event.ActionEvent evt) {
-		msg("Analise semantica: Nao implementado", "", 9);
+		try {
+			controlador.analiseSemantica(textAreaCodigo.getText());
+		} catch (LexicalError | SyntaticError | SemanticError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(0);
+		}
 	}
 
 	private void menuItemSalvarComoActionPerformed(

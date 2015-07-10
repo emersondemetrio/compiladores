@@ -2,11 +2,21 @@ package gals;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import semantico.AnalisadorSemantico;
+import semantico.Categoria;
+import semantico.ContextoLID;
+import semantico.Tabela;
 
 public class Semantico implements Constants {
 
+	private Tabela ts = new Tabela();
+	private AnalisadorSemantico analisador = new AnalisadorSemantico();
+
 	public void executeAction(int action, Token token) throws SemanticError {
-		System.out.println("Ação #" + action + ", Token: " + token);
+		// System.out.println("Ação #" + action + ", Token: " + token);
 		try {
 			@SuppressWarnings("rawtypes")
 			Class[] classeParametros = new Class[] { Token.class };
@@ -20,8 +30,9 @@ public class Semantico implements Constants {
 				SemanticError erroSemantico = (SemanticError) e.getCause();
 				throw erroSemantico;
 			} else {
-				throw new SemanticError("Erro nao esperado: "
-						+ e.getCause().getMessage(), token.getPosition());
+				// throw new SemanticError("Erro nao esperado: " +
+				// e.getCause().getMessage(), token.getPosition());
+				e.printStackTrace();
 			}
 		} catch (NoSuchMethodException e) {
 			throw new SemanticError("Erro, a ação #" + action
@@ -32,16 +43,40 @@ public class Semantico implements Constants {
 		}
 	}
 
+	public ArrayList<String> getList(String[] params) {
+		ArrayList<String> temp = new ArrayList<String>();
+		for (String t : params) {
+			temp.add(t);
+		}
+		return temp;
+	}
+
 	public void acao101(Token token) {
 
+		analisador.setNivelAtual(0);
+		analisador.setDeslocamento(0);
+
+		ts.add(token.getLexeme(),
+				getList(new String[] {
+						String.valueOf(analisador.getNivelAtual()),
+						String.valueOf(analisador.getDeslocamento().peek()),
+						String.valueOf(Categoria.PROGRAMA) }));
+
+		ts.show();
 	}
 
 	public void acao102(Token token) {
+		analisador.setContextoLid(ContextoLID.DECLARACAO);
 
+		ts.add("Primeiro ID da Lista:", getList(new String[] { String
+				.valueOf(analisador.getListaIDs().get(0)) }));
+		ts.show();
 	}
 
 	public void acao103(Token token) {
-
+		ts.add("Ultimo ID da Lista:", getList(new String[] { String
+				.valueOf(analisador.getListaIDs().get(
+						analisador.getListaIDs().size() - 1)) }));
 	}
 
 	public void acao104(Token token) {
@@ -350,15 +385,6 @@ public class Semantico implements Constants {
 
 	public void acao180(Token token) throws SemanticError {
 
-	}
-
-	public void imprimeTS() {
-		System.out
-				.println("A tabela de símbolos ao final da execução contém:\n");
-		/*
-		 * for (Identificador id : this.tabelaSimbolos) {
-		 * System.out.println(id.toString()); }
-		 */
 	}
 
 }

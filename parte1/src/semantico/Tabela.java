@@ -1,33 +1,37 @@
 package semantico;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class Tabela {
 
-	private ArrayList<String> tabela;
+	private Hashtable<String, ArrayList<String>> tabela = new Hashtable<String, ArrayList<String>>();
 
-	public Tabela() {
-		tabela = new ArrayList<String>();
-	}
-
-	public ArrayList<String> get() {
+	public Hashtable<String, ArrayList<String>> getTabela() {
 		return tabela;
 	}
 
-	public boolean add(String valor) {
-		tabela.add(valor);
-		return false;
+	public void setTabela(Hashtable<String, ArrayList<String>> tabela) {
+		this.tabela = tabela;
 	}
 
-	public boolean remover(int indice) {
-		return false;
+	public void add(String lexeme, ArrayList<String> atributos) {
+		tabela.put(lexeme, atributos);
 	}
 
-	public boolean comparar(String cp1, String cp2) {
-		return false;
+	public int getUltimaPosicao() {
+		return this.tabela.size() - 1;
 	}
 
-	public int indexOfElemento(String elemento) {
-		return -1;
+	public int getPrimeiraPosicao() {
+		return this.tabela.size() - (this.tabela.size() - 1);
+	}
+
+	public void show() {
+		System.out.println(tabela.toString());
+		/*
+		 * for (Identificador id : this.tabelaSimbolos) {
+		 * System.out.println(id.toString()); }
+		 */
 	}
 }
