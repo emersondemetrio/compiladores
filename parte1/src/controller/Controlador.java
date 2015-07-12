@@ -39,13 +39,14 @@ public class Controlador {
 
 	public void analiseLexicaSintatica(String texto) throws LexicalError,
 			SyntaticError, SemanticError {
+		analisadorSintatico.executarSemantico(false);
 		analisadorSintatico.parse(new Lexico(texto), null);
 	}
 
 	public void analiseSemantica(String texto) throws LexicalError,
 			SyntaticError, SemanticError {
 		analisadorSemantico = new Semantico();
-		analisadorSintatico.executarSemantico();
+		analisadorSintatico.executarSemantico(true);
 		analisadorSintatico.parse(new Lexico(texto), analisadorSemantico);
 	}
 }

@@ -8,10 +8,11 @@ public class Sintatico implements Constants {
 	private Token previousToken;
 	private Lexico scanner;
 	private Semantico semanticAnalyser;
+
 	private boolean execSemantico = false;
 
-	public void executarSemantico() {
-		this.execSemantico = true;
+	public void executarSemantico(boolean shouldExec) {
+		this.execSemantico = shouldExec;
 	}
 
 	private static final boolean isTerminal(int x) {
@@ -62,6 +63,7 @@ public class Sintatico implements Constants {
 						currentToken.getPosition());
 		} else {
 			// isSemanticAction(x)
+
 			if (execSemantico) {
 				semanticAnalyser.executeAction(x - FIRST_SEMANTIC_ACTION,
 						previousToken);

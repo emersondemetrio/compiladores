@@ -16,13 +16,15 @@ public class Semantico implements Constants {
 	private AnalisadorSemantico analisador = new AnalisadorSemantico();
 
 	public void executeAction(int action, Token token) throws SemanticError {
-		// System.out.println("Ação #" + action + ", Token: " + token);
+		System.out.println("Ação #" + action + ", Token: " + token);
 		try {
 			@SuppressWarnings("rawtypes")
 			Class[] classeParametros = new Class[] { Token.class };
 			java.lang.String nomeMetodo = "acao" + action;
 			Method metodo = getClass().getMethod(nomeMetodo, classeParametros);
 			Object[] argumentos = new Object[] { token };
+			System.out.println(this);
+			System.out.println(argumentos);
 			metodo.invoke(this, argumentos);
 
 		} catch (InvocationTargetException e) {
@@ -66,17 +68,17 @@ public class Semantico implements Constants {
 	}
 
 	public void acao102(Token token) {
-		analisador.setContextoLid(ContextoLID.DECLARACAO);
+		/*analisador.setContextoLid(ContextoLID.DECLARACAO);
 
 		ts.add("Primeiro ID da Lista:", getList(new String[] { String
 				.valueOf(analisador.getListaIDs().get(0)) }));
-		ts.show();
+		ts.show();*/
 	}
 
 	public void acao103(Token token) {
-		ts.add("Ultimo ID da Lista:", getList(new String[] { String
+/*		ts.add("Ultimo ID da Lista:", getList(new String[] { String
 				.valueOf(analisador.getListaIDs().get(
-						analisador.getListaIDs().size() - 1)) }));
+						analisador.getListaIDs().size() - 1)) }));*/
 	}
 
 	public void acao104(Token token) {
