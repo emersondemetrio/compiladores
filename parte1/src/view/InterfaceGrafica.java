@@ -32,7 +32,7 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 		initComponents();
 		setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
 		controlador = new Controlador();
-		textAreaCodigo.setText("programa teste; {} .");
+		textAreaCodigo.setText("programa teste; inteiro teste = 10; {} .");
 	}
 
 	private static void log(String msg) {
@@ -128,7 +128,6 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 		} catch (LexicalError | SyntaticError | SemanticError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.exit(0);
 		}
 	}
 

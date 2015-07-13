@@ -1,38 +1,84 @@
 package semantico;
 
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.Stack;
 
 public class AnalisadorSemantico {
 
-	private int nivelAtual;
-	private Stack<Integer> deslocamento = new Stack<Integer>();
+	/* enums */
+	
+	private TipoFator tipoFator;
+	private TipoParametro tipoParametro;
+	private SubCategoria subCategoria;
 	private ContextoLID contextoLid;
-	private ArrayList<String> listaIDs = new ArrayList<String>();
 
-	public ArrayList<String> getListaIDs() {
-		return listaIDs;
+	/* pilhas */
+	private Stack<Integer> pilhaDeslocamento;
+
+	/* atributos gerais */
+	private int nivelAtual;
+	private int deslocamento;
+	private int NPF;
+
+	private ArrayList<Item> lid;
+
+	/* quantidade de ids */
+
+	public AnalisadorSemantico() {
+		this.pilhaDeslocamento = new Stack<Integer>();
+		this.lid = new ArrayList<Item>();
 	}
 
-	public void setListaIDs(ArrayList<String> listaIDs) {
-		this.listaIDs = listaIDs;
+	public TipoFator getTipoFator() {
+		return tipoFator;
+	}
+
+	public void setTipoFator(TipoFator tipoFator) {
+		this.tipoFator = tipoFator;
+	}
+
+	public TipoParametro getTipoParametro() {
+		return tipoParametro;
+	}
+
+	public void setTipoParametro(TipoParametro tipoParametro) {
+		this.tipoParametro = tipoParametro;
+	}
+
+	public Stack<Integer> getPilhaDeslocamento() {
+		return pilhaDeslocamento;
+	}
+
+	public void setPilhaDeslocamento(Stack<Integer> pilhaDeslocamento) {
+		this.pilhaDeslocamento = pilhaDeslocamento;
 	}
 
 	public int getNivelAtual() {
 		return nivelAtual;
 	}
 
-	public void setNivelAtual(int nivel) {
-		this.nivelAtual = nivel;
+	public void setNivelAtual(int nivelAtual) {
+		this.nivelAtual = nivelAtual;
 	}
 
-	public Stack<Integer> getDeslocamento() {
+	public void setDeslocamento(int deslocamentoAtual) {
+		this.deslocamento = deslocamentoAtual;
+	}
+
+	public int getDeslocamento() {
 		return deslocamento;
 	}
 
-	public void setDeslocamento(int deslocamento) {
-		this.deslocamento.push(deslocamento);
+	public void addDeslocamento(int deslocamento) {
+		this.pilhaDeslocamento.push(deslocamento);
+	}
+
+	public SubCategoria getSubCategoria() {
+		return subCategoria;
+	}
+
+	public void setSubCategoria(SubCategoria subCategoria) {
+		this.subCategoria = subCategoria;
 	}
 
 	public ContextoLID getContextoLid() {
@@ -42,5 +88,22 @@ public class AnalisadorSemantico {
 	public void setContextoLid(ContextoLID contextoLid) {
 		this.contextoLid = contextoLid;
 	}
+
+	public ArrayList<Item> getLid() {
+		return lid;
+	}
+
+	public void setLid(ArrayList<Item> lid) {
+		this.lid = lid;
+	}
+
+	public int getNPF() {
+		return NPF;
+	}
+
+	public void setNPF(int nPF) {
+		NPF = nPF;
+	}
+	
 
 }
