@@ -3,6 +3,9 @@ package gals;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Stack;
+
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import semantico.AnalisadorSemantico;
 import semantico.Categoria;
@@ -10,6 +13,7 @@ import semantico.ContextoLID;
 import semantico.Item;
 import semantico.SubCategoria;
 import semantico.Tabela;
+import semantico.TipoParametro;
 import semantico.TipoVariavel;
 
 public class Semantico implements Constants {
@@ -20,10 +24,19 @@ public class Semantico implements Constants {
 	private AnalisadorSemantico analisador = new AnalisadorSemantico();
 
 	private Categoria categoriaAtual;
-	private SubCategoria subCategoriaAtual;
+	private SubCategoria subCategoria;
 	private TipoVariavel tipoConstante;
 	private TipoVariavel tipoAtual;
-	private int valConstante;
+	private Integer numElementos;
+	private String valConst;
+	private int nivelAtual;
+	private int deslocamentoAtual;
+	private Stack<Integer> pilhaDeslocamento = new Stack<Integer>();
+	private ContextoLID contextoLid;
+	private TipoParametro MPP;//mecanismo de passagem de parametros
+	//private ArrayList<Item> lid = new ArrayList<Item>();
+	private int NPF; //numero de parametros formais
+	private TipoVariavel tipoMetodo;
 
 	public void executeAction(int action, Token token) throws SemanticError {
 		// System.out.println("Ação #" + action + ", Token: " + token);
@@ -65,40 +78,43 @@ public class Semantico implements Constants {
 
 	public void acao101(Token token) {
 
-		analisador.setNivelAtual(0);
-		analisador.setDeslocamento(0);
-		analisador.addDeslocamento(0);
+		nivelAtual = 0;
+		deslocamentoAtual = 0;
+		pilhaDeslocamento.add(0);
 
 		String idPrograma = token.getLexeme();
-		int nivelAtual = analisador.getNivelAtual();
-		int deslocamento = analisador.getDeslocamento();
 
-		Item identificadorAtual = new Item(Categoria.PROGRAMA, idPrograma,
-				nivelAtual, deslocamento);
+		Item identificadorAtual = new Item(Categoria.PROGRAMA, idPrograma);
 
 		ts.addItem(identificadorAtual);
 		ts.show();
 	}
 
 	public void acao102(Token token) {
-		analisador.setContextoLid(ContextoLID.DECLARACAO);
-		ts.addItem(new Item(Categoria.VARIAVEL, token.getLexeme(), analisador
-				.getNivelAtual(), analisador.getDeslocamento()));
+		contextoLid = ContextoLID.DECLARACAO;
+		ts.addItem(new Item(Categoria.VARIAVEL, token.getLexeme(), nivelAtual,
+				deslocamentoAtual));
 		ts.setPrimeiraPosicaoLID(0);
 	}
 
 	public void acao103(Token token) {
-		ts.setUltimaPosicaoLID(analisador.getLid().size() -1);
+		ts.setUltimaPosicaoLID(ts.getTabela().size() - 1);
 	}
 
 	public void acao104(Token token) {
 		// cada identificador presente;
-		int deslocamento = 0;
 
 		for (Item atual : ts.getTabela()) {
 			atual.setTipoCategoria(categoriaAtual);
-			atual.setTipoSubCategoria(subCategoriaAtual);
-
+			atual.setTipoSubCategoria(subCategoria);
+			if (atual.getTipoCategoria() == Categoria.VARIAVEL
+					&& atual.getTipoSubCategoria() == SubCategoria.VETOR) {
+				pilhaDeslocamento.add(numElementos);
+				deslocamentoAtual = numElementos;
+			} else {
+				pilhaDeslocamento.add(1);
+				deslocamentoAtual++;
+			}
 		}
 	}
 
@@ -120,88 +136,105 @@ public class Semantico implements Constants {
 
 	public void acao109(Token token) throws SemanticError {
 		if (this.tipoConstante != TipoVariavel.INTEIRO) {
-			throw new SemanticError("Esperava-se uma constante inteira");
+			throw new SemanticError("Esperava-se uma constante inteira",
+					token.getPosition());
+		} else if (Integer.parseInt(valConst) > 256) {
+			throw new SemanticError("cadeia > que o permitido",
+					token.getPosition());
+		} else {
+			tipoAtual = TipoVariavel.CADEIA;
 		}
-		this.tipoAtual = TipoVariavel.CADEIA;
-		
-		// falta fazer valConstante;
+
 	}
 
 	public void acao110(Token token) throws SemanticError {
 		if (getTipoAtual() == TipoVariavel.CADEIA) {
-			throw new SemanticError("Vetor do tipo cadeia não é permitido");
+			throw new SemanticError("Vetor do tipo cadeia não é permitido",
+					token.getPosition());
 		} else {
-			analisador.setSubCategoria(SubCategoria.VETOR);
+			subCategoria = SubCategoria.VETOR;
 		}
 	}
 
 	public void acao111(Token token) throws SemanticError {
-		// analisador.tipoConstante;
+		if (tipoConstante != TipoVariavel.INTEIRO) {
+			throw new SemanticError(
+					"A dimensão deve ser uma constante inteira",
+					token.getPosition());
+		} else {
+			this.numElementos = Integer.parseInt(valConst);
+		}
+
 	}
 
 	public void acao112(Token token) throws SemanticError {
-		if (getTipoAtual() != TipoVariavel.CADEIA) {
-			analisador.setSubCategoria(SubCategoria.CADEIA);
+		if (getTipoAtual() == TipoVariavel.CADEIA) {
+			subCategoria = SubCategoria.CADEIA;
 		} else {
-			analisador.setSubCategoria(SubCategoria.PREDEFINIDO);
+			subCategoria = SubCategoria.PREDEFINIDO;
 		}
 	}
 
 	public void acao113(Token token) throws SemanticError {
-		boolean jaExiste = false;
-		int indice = 0;
 
-		if (analisador.getContextoLid() == ContextoLID.DECLARACAO) {
+		if (contextoLid == ContextoLID.DECLARACAO) {
+			if (ts.estaDeclarado(token.getLexeme(), nivelAtual)) {
+				throw new SemanticError("Id já declarado", token.getPosition());
+			} else {
+				ts.addItem(new Item(Categoria.VARIAVEL, token.getLexeme(),
+						nivelAtual, deslocamentoAtual, SubCategoria.PREDEFINIDO));
+			}
 
-			while (!jaExiste && indice <= ts.getTabela().size()) {
-				Item atual = ts.getTabela().get(indice);
+		} else if (contextoLid == ContextoLID.PARAMETRO_FORMAL) {
 
-				if (atual.getNome().equals(token.getLexeme())) {
-					jaExiste = true;
-					throw new SemanticError("Id já declarado");
+			if (ts.estaDeclarado(token.getLexeme(), nivelAtual)) {
+				throw new SemanticError("Id parâmetro repetido",
+						token.getPosition());
+			} else {
+				ts.addItem(new Item(Categoria.VARIAVEL, token.getLexeme(),
+						nivelAtual, deslocamentoAtual, SubCategoria.PREDEFINIDO));
+				NPF++;
+			}
+
+		} else if (contextoLid == ContextoLID.LEITURA) {
+			if (!ts.estaDeclarado(token.getLexeme(), nivelAtual)) {
+				throw new SemanticError("Id não declarado", token.getPosition());
+			} else {
+				Item id = ts.getIdNomePosicao(token.getLexeme(), nivelAtual);
+				if ((id.getTipoCategoria() == Categoria.VARIAVEL || id
+						.getTipoCategoria() == Categoria.PARAMETRO)
+						&& (id.getTipoSubCategoria() == SubCategoria.PREDEFINIDO)
+						&& (id.getTipo() != TipoVariavel.BOOLEANO && id
+								.getTipo() != TipoVariavel.CADEIA)) {
+					/* gera codigo para leitura */
+
 				} else {
-					indice++;
+					throw new SemanticError("Tipo Invalido para leitura",
+							token.getPosition());
 				}
 			}
-			if (!jaExiste) {
-				ts.addItem(new Item(Categoria.VARIAVEL, token.getLexeme(),
-						analisador.getNivelAtual(), analisador
-								.getDeslocamento()));
-			}
-
-		} else if (analisador.getContextoLid() == ContextoLID.PARAMETRO_FORMAL) {
-
-			while (!jaExiste && indice <= ts.getTabela().size()) {
-				Item atual = ts.getTabela().get(indice);
-
-				if (atual.getNome().equals(token.getLexeme())) {
-					jaExiste = true;
-					throw new SemanticError("Parametro repetido");
-				} else {
-					indice++;
-				}
-			}
-
-			if (!jaExiste) {
-				ts.addItem(new Item(Categoria.VARIAVEL, token.getLexeme(),
-						analisador.getNivelAtual(), analisador
-								.getDeslocamento()));
-
-				analisador.setNPF(analisador.getNPF() + 1);
-			}
-		} else if (analisador.getContextoLid() == ContextoLID.LEITURA) {
-			// comparar se id ja foi declarado
 
 		}
 
 	}
 
 	public void acao114(Token token) throws SemanticError {
-		
+		if (subCategoria == SubCategoria.CADEIA
+				|| subCategoria == SubCategoria.VETOR) {
+			throw new SemanticError(
+					"Apenas id de tipo pré-def podem ser declarados como constante",
+					token.getPosition());
+		} else {
+			categoriaAtual = Categoria.CONSTANTE;
+		}
+
 	}
 
 	public void acao115(Token token) throws SemanticError {
-
+		if (tipoConstante != tipoAtual) {
+			throw new SemanticError("Tipo da constante incorreto",
+					token.getPosition());
+		}
 	}
 
 	public void acao116(Token token) {
@@ -209,15 +242,21 @@ public class Semantico implements Constants {
 	}
 
 	public void acao117(Token token) throws SemanticError {
-
+		if(ts.estaDeclarado(token.getLexeme(), nivelAtual)){
+			throw new SemanticError("Id já declarado",
+					token.getPosition());
+		}else{
+			NPF = 0;
+			ts.addItem(new Item(Categoria.METODO, token.getLexeme(), nivelAtual + 1));
+		}
 	}
 
 	public void acao118(Token token) {
-
+		ts.setNPF(NPF);
 	}
 
 	public void acao119(Token token) {
-
+		ts.setTipoMetodo(tipoMetodo);
 	}
 
 	public void acao120(Token token) {
@@ -225,31 +264,46 @@ public class Semantico implements Constants {
 	}
 
 	public void acao121(Token token) {
-
+		contextoLid = ContextoLID.PARAMETRO_FORMAL;
+		ts.setPrimeiraPosicaoLID(0);
 	}
 
 	public void acao122(Token token) {
-
+		ts.setUltimaPosicaoLID(ts.getTabela().size() - 1);
 	}
 
 	public void acao123(Token token) throws SemanticError {
-
+		if(tipoAtual != TipoVariavel.BOOLEANO || tipoAtual != TipoVariavel.CARACTER || tipoAtual != TipoVariavel.INTEIRO ||
+				tipoAtual != TipoVariavel.REAL){
+			throw new SemanticError("Parâmetros devem ser de tipo Pré-Definido", token.getPosition());
+		}else{
+			for (Item atual : ts.getTabela()) {
+				atual.setTipoCategoria(Categoria.PARAMETRO);
+				atual.setTipo(tipoAtual);
+				atual.setMPP(MPP);
+			}
+		}
+		
 	}
-
+	//parei aquiiiiiiiiii
 	public void acao124(Token token) throws SemanticError {
-
+		if(tipoAtual == TipoVariavel.CADEIA){
+			throw new SemanticError("Métodos devem ser de tipo pré-definido", token.getPosition());
+		}else{
+			tipoMetodo = tipoAtual; 
+		}
 	}
 
 	public void acao125(Token token) {
-
+		tipoMetodo = TipoVariavel.NULO;
 	}
 
 	public void acao126(Token token) {
-
+		MPP = TipoParametro.REFERENCIA;
 	}
 
 	public void acao127(Token token) {
-
+		MPP = TipoParametro.VALOR;
 	}
 
 	public void acao128(Token token) throws SemanticError {
@@ -441,31 +495,46 @@ public class Semantico implements Constants {
 	}
 
 	public void acao175(Token token) throws SemanticError {
-		if(token.getLexeme()){
-			
+		if (!ts.estaDeclarado(token.getLexeme(), 0)) {
+			throw new SemanticError("id não declarado", token.getPosition());
+		} else {
+			Item item = ts.getIdNomePosicao(token.getLexeme(), nivelAtual);// constante
+			if (item.getTipoCategoria() != Categoria.CONSTANTE) {
+				throw new SemanticError("id de Constante esperado",
+						token.getPosition());
+			} else {
+				tipoConstante = item.getTipo();
+				valConst = item.getValor();
+			}
 		}
+
 	}
 
 	public void acao176(Token token) throws SemanticError {
-
+		tipoConstante = TipoVariavel.INTEIRO;
+		valConst = token.getLexeme();
 	}
 
 	public void acao177(Token token) throws SemanticError {
-
+		tipoConstante = TipoVariavel.REAL;
+		valConst = token.getLexeme();
 	}
 
 	public void acao178(Token token) throws SemanticError {
-
+		tipoConstante = TipoVariavel.BOOLEANO;
+		valConst = token.getLexeme();
 	}
 
 	public void acao179(Token token) throws SemanticError {
-
+		tipoConstante = TipoVariavel.BOOLEANO;
+		valConst = token.getLexeme();
 	}
 
 	public void acao180(Token token) throws SemanticError {
-
+		tipoConstante = TipoVariavel.CARACTER;
+		valConst = token.getLexeme();
 	}
-	
+
 	public TipoVariavel getTipoAtual() {
 		return tipoAtual;
 	}

@@ -1,6 +1,6 @@
 package semantico;
 
 public enum TipoVariavel {
-	INTEIRO, REAL, CARACTER, BOOLEANO, CADEIA
+	INTEIRO, REAL, CARACTER, BOOLEANO, CADEIA,NULO
 
 }

@@ -9,8 +9,9 @@ public class AnalisadorSemantico {
 	
 	private TipoFator tipoFator;
 	private TipoParametro tipoParametro;
-	private SubCategoria subCategoria;
+	//private SubCategoria subCategoria;
 	private ContextoLID contextoLid;
+
 
 	/* pilhas */
 	private Stack<Integer> pilhaDeslocamento;
@@ -73,13 +74,13 @@ public class AnalisadorSemantico {
 		this.pilhaDeslocamento.push(deslocamento);
 	}
 
-	public SubCategoria getSubCategoria() {
+	/*public SubCategoria getSubCategoria() {
 		return subCategoria;
 	}
 
 	public void setSubCategoria(SubCategoria subCategoria) {
 		this.subCategoria = subCategoria;
-	}
+	}*/
 
 	public ContextoLID getContextoLid() {
 		return contextoLid;

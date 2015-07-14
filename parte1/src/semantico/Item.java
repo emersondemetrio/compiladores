@@ -5,16 +5,44 @@ public class Item {
 	private String nome;
 	private int nivel;
 	private int deslocamento;
-	private String tipoAtual;
+	private TipoVariavel tipo;
 	private Categoria tipoCategoria;
 	private SubCategoria tipoSubCategoria;
-	
+	private String valor;
+	private TipoParametro MPP;
+
 	private int tamanho;
 
 	public Item() {
 
 	}
 
+	// id Programa
+	public Item(Categoria categoria, String nome) {
+		this.tipoCategoria = categoria;
+		this.nome = nome;
+	}
+
+	// id Constante
+	public Item(Categoria categoria, String nome, int nivel,
+			TipoVariavel tipoVariavel) {
+		this.tipoCategoria = categoria;
+		this.nome = nome;
+		this.nivel = nivel;
+	}
+
+	// id variavel
+	public Item(Categoria categoria, String nome, int nivel, int deslocamento,
+			SubCategoria subcategoria) {
+		this.tipoCategoria = categoria;
+		this.nome = nome;
+		this.nivel = nivel;
+		this.deslocamento = deslocamento;
+		this.tipoSubCategoria = subcategoria;
+
+	}
+
+	// id metodo
 	public Item(Categoria categoria, String nome, int nivel, int deslocamento) {
 		this.tipoCategoria = categoria;
 		this.nome = nome;
@@ -22,9 +50,20 @@ public class Item {
 		this.deslocamento = deslocamento;
 	}
 
+	// id parametro
+	public Item(Categoria categoria, String nome, int nivel) {
+		this.tipoCategoria = categoria;
+		this.nome = nome;
+		this.nivel = nivel;
+		this.deslocamento = deslocamento;
+	}
+	
+	
+
 	public String getNome() {
 		return nome;
 	}
+	
 
 	public void setNome(String nome) {
 		this.nome = nome;
@@ -44,14 +83,6 @@ public class Item {
 
 	public void setDeslocamento(int deslocamento) {
 		this.deslocamento = deslocamento;
-	}
-
-	public String getTipoAtual() {
-		return tipoAtual;
-	}
-
-	public void setTipoAtual(String tipoAtual) {
-		this.tipoAtual = tipoAtual;
 	}
 
 	public Categoria getTipoCategoria() {
@@ -76,5 +107,29 @@ public class Item {
 
 	public void setTipoSubCategoria(SubCategoria tipoSubCategoria) {
 		this.tipoSubCategoria = tipoSubCategoria;
+	}
+
+	public String getValor() {
+		return valor;
+	}
+
+	public void setValor(String valor) {
+		this.valor = valor;
+	}
+
+	public TipoVariavel getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(TipoVariavel tipo) {
+		this.tipo = tipo;
+	}
+
+	public TipoParametro getMPP() {
+		return MPP;
+	}
+
+	public void setMPP(TipoParametro mPP) {
+		MPP = mPP;
 	}
 }

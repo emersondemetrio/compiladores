@@ -8,11 +8,14 @@ public class Tabela {
 	private ArrayList<Item> tabela;
 	private int primeiraPosicaoLID;
 	private int ultimaPosicaoLID;
-
+	private int NPF;
+	private TipoVariavel tipoMetodo;
+	
 	public Tabela() {
 		tabela = new ArrayList<Item>();
 	}
-
+	
+	
 	public void addItem(Item identificador) {
 		tabela.add(identificador);
 	}
@@ -72,24 +75,47 @@ public class Tabela {
 	public void setUltimaPosicaoLID(int ultimaPosicaoLID) {
 		this.ultimaPosicaoLID = ultimaPosicaoLID;
 	}
-	
-	public boolean estaDeclarado(String lexeme, int nivel){
-		boolean declarado = false;
+
+	public boolean estaDeclarado(String lexeme, int nivel) {
+		for (Item temp : tabela) {
+			if (temp.getNivel() == nivel) {
+				if (temp.getNome().equals(lexeme)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public boolean identificadorDeclarado(String lexeme, int nivel) {
 		boolean resultado = false;
-		
-		if (this.indexLexeme.containsKey(lexeme)) {
-			ArrayList<Integer> indices = this.indexLexeme.get(lexeme);
-			for (Integer i : indices) {
-				Identificador identificador = this.get(i);
-				if (identificador.getNivel() <= nivel) {
-					resultado = true;
-					break;
-				}
-			}
-		}
+
+		/*
+		 * if (this.indexLexeme.containsKey(lexeme)) { ArrayList<Integer>
+		 * indices = this.indexLexeme.get(lexeme); for (Integer i : indices) {
+		 * Identificador identificador = this.get(i); if
+		 * (identificador.getNivel() <= nivel) { resultado = true; break; } } }
+		 */
 		return resultado;
+	}
+
+
+	public int getNPF() {
+		return NPF;
+	}
+
+
+	public void setNPF(int nPF) {
+		NPF = nPF;
+	}
+
+
+	public TipoVariavel getTipoMetodo() {
+		return tipoMetodo;
+	}
+
+
+	public void setTipoMetodo(TipoVariavel tipoMetodo) {
+		this.tipoMetodo = tipoMetodo;
 	}
 }

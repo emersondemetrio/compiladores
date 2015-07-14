@@ -125,10 +125,24 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 	private void menuItemSemanticoActionPerformed(java.awt.event.ActionEvent evt) {
 		try {
 			controlador.analiseSemantica(textAreaCodigo.getText());
-		} catch (LexicalError | SyntaticError | SemanticError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			msg("Nenhum erro semantico foi encontrado", "Mensagem", 0);
+		} catch (LexicalError lex) {
+			log(lex.toString());
+			this.textAreaCodigo.setCaretPosition(lex.getPosition());
+			msg(lex.getMessage(), "Erro Léxico", 1);
+			log(lex.toString());
+		} catch (SyntaticError syn) {
+			this.textAreaCodigo.setCaretPosition(syn.getPosition());
+			msg(syn.getMessage(), "Erro Sintático", 2);
+			log(syn.toString());
+
+		} catch (SemanticError sem) {
+			this.textAreaCodigo.setCaretPosition(sem.getPosition());
+			msg(sem.getMessage(), "Erro Semantico", 2);
+			log(sem.toString());
+
 		}
+
 	}
 
 	private void menuItemSalvarComoActionPerformed(
