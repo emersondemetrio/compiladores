@@ -16,6 +16,7 @@ import semantico.Tabela;
 import semantico.TipoParametro;
 import semantico.TipoVariavel;
 
+
 public class Semantico implements Constants {
 
 	// LID = LIsta de Declaracao
@@ -34,9 +35,20 @@ public class Semantico implements Constants {
 	private Stack<Integer> pilhaDeslocamento = new Stack<Integer>();
 	private ContextoLID contextoLid;
 	private TipoParametro MPP;//mecanismo de passagem de parametros
-	//private ArrayList<Item> lid = new ArrayList<Item>();
+	private ArrayList<Item> listaPar = new ArrayList<Item>();
 	private int NPF; //numero de parametros formais
 	private TipoVariavel tipoMetodo;
+	private int posID; //posição ID
+	private TipoVariavel tipoLadoEsquerdo;
+	private boolean opNega;
+	private TipoVariavel tipoFator;
+	private boolean OpUnario;
+	private TipoVariavel tipoExpressao;
+	private TipoVariavel tipoVariavel;
+	private int NPA; //numero parametros atuais
+	private ContextoLID contextoEXPR;
+	
+	private Stack<Item> pilhaMetodos;
 
 	public void executeAction(int action, Token token) throws SemanticError {
 		// System.out.println("Ação #" + action + ", Token: " + token);
@@ -281,6 +293,7 @@ public class Semantico implements Constants {
 				atual.setTipoCategoria(Categoria.PARAMETRO);
 				atual.setTipo(tipoAtual);
 				atual.setMPP(MPP);
+				listaPar.add(atual);
 			}
 		}
 		
@@ -307,7 +320,11 @@ public class Semantico implements Constants {
 	}
 
 	public void acao128(Token token) throws SemanticError {
-
+		if(!ts.estaDeclarado(token.getLexeme(), nivelAtual)){
+			throw new SemanticError("“Identificador não declarado", token.getPosition());
+		}else{
+			posID = ts.getPosicaoIDTS(token, nivelAtual);
+		}
 	}
 
 	public void acao129(Token token) throws SemanticError {
@@ -327,7 +344,16 @@ public class Semantico implements Constants {
 	}
 
 	public void acao133(Token token) throws SemanticError {
-
+		Item item = ts.getElementoPosicao(posID);
+		if(item.getTipoCategoria() == Categoria.VARIAVEL || item.getTipoCategoria()  == Categoria.PARAMETRO){
+			if(item.getTipoSubCategoria() == SubCategoria.VETOR){
+				throw new SemanticError("Id deveria ser indexado", token.getPosition());
+			}else{
+				tipoLadoEsquerdo = item.getTipo();
+			}
+		}else{
+			throw new SemanticError("Id deveria ser variavel ou parametro", token.getPosition());
+		}
 	}
 
 	public void acao134(Token token) throws SemanticError {
@@ -357,9 +383,13 @@ public class Semantico implements Constants {
 	public void acao140(Token token) throws SemanticError {
 
 	}
-
+	//Continuar!!!!
 	public void acao141(Token token) throws SemanticError {
-
+		if(contextoEXPR == ContextoLID.PARAMETRO_ATUAL){
+			NPA++;
+			Item metodo = pilhaMetodos.peek();
+			
+		}
 	}
 
 	public void acao142(Token token) {
@@ -447,39 +477,66 @@ public class Semantico implements Constants {
 	}
 
 	public void acao163(Token token) throws SemanticError {
-
+		if(opNega){
+			throw new SemanticError("Operação 'não' repetido - não pode!", token.getPosition());
+		}else{
+			opNega = true;
+		}
 	}
 
 	public void acao164(Token token) throws SemanticError {
-
+		if(tipoFator != TipoVariavel.BOOLEANO){
+			throw new SemanticError("Operação 'não' exige operando booleano", token.getPosition());
+		}else{
+			opNega = false;
+		}
 	}
 
 	public void acao165(Token token) throws SemanticError {
-
+		if(OpUnario){
+			throw new SemanticError("Operador Unário repetido", token.getPosition());
+		}else{
+			OpUnario = true;
+		}
 	}
 
 	public void acao166(Token token) throws SemanticError {
-
+		if(tipoFator != TipoVariavel.INTEIRO || tipoFator != TipoVariavel.REAL){
+			throw new SemanticError("Operador Unário exige exige operando numero", token.getPosition());
+		}else{
+			OpUnario = false;
+		}
 	}
 
 	public void acao167(Token token) {
-
+		opNega = OpUnario = false;
 	}
 
 	public void acao168(Token token) {
-
+		tipoFator = tipoExpressao;
 	}
 
 	public void acao169(Token token) {
-
+		tipoFator = tipoVariavel;
 	}
 
 	public void acao170(Token token) {
-
+		tipoFator = tipoConstante;
 	}
 
 	public void acao171(Token token) throws SemanticError {
-
+		Item item = ts.getIdNomePosicao(token.getLexeme(), nivelAtual);
+		pilhaMetodos.push(item);
+		if(item.getTipoCategoria() != Categoria.METODO ){
+			throw new SemanticError("id deveria ser um metodo", token.getPosition());
+		}else{
+			if(tipoMetodo == TipoVariavel.NULO){
+				throw new SemanticError("Esperava-se método com tipo", token.getPosition());
+			}else{
+				NPA = 0;
+				contextoEXPR = ContextoLID.PARAMETRO_ATUAL;
+			}
+		}
 	}
 
 	public void acao172(Token token) throws SemanticError {

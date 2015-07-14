@@ -1,5 +1,7 @@
 package semantico;
 
+import gals.Token;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -10,12 +12,11 @@ public class Tabela {
 	private int ultimaPosicaoLID;
 	private int NPF;
 	private TipoVariavel tipoMetodo;
-	
+
 	public Tabela() {
 		tabela = new ArrayList<Item>();
 	}
-	
-	
+
 	public void addItem(Item identificador) {
 		tabela.add(identificador);
 	}
@@ -99,21 +100,29 @@ public class Tabela {
 		return resultado;
 	}
 
+	public int getPosicaoIDTS(Token token,int nivel) {
+		int posicao = 0;
+		for (int i = 0; i < tabela.size(); i++) {
+			if (tabela.get(i).getNome() == token.getLexeme() && tabela.get(i).getNivel() == nivel) {
+				posicao = i;
+				break;
+			}
+		}
+		System.out.println("posicao do ID na tabela Simbolo::         " + posicao);
+		return posicao;
+	}
 
 	public int getNPF() {
 		return NPF;
 	}
 
-
 	public void setNPF(int nPF) {
 		NPF = nPF;
 	}
 
-
 	public TipoVariavel getTipoMetodo() {
 		return tipoMetodo;
 	}
-
 
 	public void setTipoMetodo(TipoVariavel tipoMetodo) {
 		this.tipoMetodo = tipoMetodo;
