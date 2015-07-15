@@ -11,11 +11,11 @@ import semantico.AnalisadorSemantico;
 import semantico.Categoria;
 import semantico.ContextoLID;
 import semantico.Item;
+import semantico.Operador;
 import semantico.SubCategoria;
 import semantico.Tabela;
 import semantico.TipoParametro;
 import semantico.TipoVariavel;
-
 
 public class Semantico implements Constants {
 
@@ -34,20 +34,23 @@ public class Semantico implements Constants {
 	private int deslocamentoAtual;
 	private Stack<Integer> pilhaDeslocamento = new Stack<Integer>();
 	private ContextoLID contextoLid;
-	private TipoParametro MPP;//mecanismo de passagem de parametros
+	private TipoParametro MPP;// mecanismo de passagem de parametros
 	private ArrayList<Item> listaPar = new ArrayList<Item>();
-	private int NPF; //numero de parametros formais
+	private int NPF; // numero de parametros formais
 	private TipoVariavel tipoMetodo;
-	private int posID; //posição ID
+	private int posID; // posição ID na TS
 	private TipoVariavel tipoLadoEsquerdo;
 	private boolean opNega;
 	private TipoVariavel tipoFator;
 	private boolean OpUnario;
 	private TipoVariavel tipoExpressao;
 	private TipoVariavel tipoVariavel;
-	private int NPA; //numero parametros atuais
+	private int NPA; // numero parametros atuais
 	private ContextoLID contextoEXPR;
-	
+	private int quantidadeIDs; // ação 121 e 122
+	private Stack<TipoVariavel> tipoTermo;
+	private Operador operadorAtual;
+
 	private Stack<Item> pilhaMetodos;
 
 	public void executeAction(int action, Token token) throws SemanticError {
@@ -254,12 +257,12 @@ public class Semantico implements Constants {
 	}
 
 	public void acao117(Token token) throws SemanticError {
-		if(ts.estaDeclarado(token.getLexeme(), nivelAtual)){
-			throw new SemanticError("Id já declarado",
-					token.getPosition());
-		}else{
+		if (ts.estaDeclarado(token.getLexeme(), nivelAtual)) {
+			throw new SemanticError("Id já declarado", token.getPosition());
+		} else {
 			NPF = 0;
-			ts.addItem(new Item(Categoria.METODO, token.getLexeme(), nivelAtual + 1));
+			ts.addItem(new Item(Categoria.METODO, token.getLexeme(),
+					nivelAtual + 1));
 		}
 	}
 
@@ -277,33 +280,43 @@ public class Semantico implements Constants {
 
 	public void acao121(Token token) {
 		contextoLid = ContextoLID.PARAMETRO_FORMAL;
-		ts.setPrimeiraPosicaoLID(0);
+		ts.setPrimeiraPosicaoLID(ts.getTabela().size());
+
 	}
 
 	public void acao122(Token token) {
-		ts.setUltimaPosicaoLID(ts.getTabela().size() - 1);
+		ts.setUltimaPosicaoLID(ts.getTabela().size() + NPF);
 	}
 
 	public void acao123(Token token) throws SemanticError {
-		if(tipoAtual != TipoVariavel.BOOLEANO || tipoAtual != TipoVariavel.CARACTER || tipoAtual != TipoVariavel.INTEIRO ||
-				tipoAtual != TipoVariavel.REAL){
-			throw new SemanticError("Parâmetros devem ser de tipo Pré-Definido", token.getPosition());
-		}else{
-			for (Item atual : ts.getTabela()) {
+		if (tipoAtual != TipoVariavel.BOOLEANO
+				|| tipoAtual != TipoVariavel.CARACTER
+				|| tipoAtual != TipoVariavel.INTEIRO
+				|| tipoAtual != TipoVariavel.REAL) {
+			throw new SemanticError(
+					"Parâmetros devem ser de tipo Pré-Definido",
+					token.getPosition());
+		} else {
+
+			for (int i = ts.getPrimeiraPosicaoLID(); i < ts
+					.getUltimaPosicaoLID(); i++) {
+				Item atual = ts.getTabela().get(i);
 				atual.setTipoCategoria(Categoria.PARAMETRO);
 				atual.setTipo(tipoAtual);
 				atual.setMPP(MPP);
 				listaPar.add(atual);
 			}
 		}
-		
+
 	}
-	//parei aquiiiiiiiiii
+
+	// parei aquiiiiiiiiii
 	public void acao124(Token token) throws SemanticError {
-		if(tipoAtual == TipoVariavel.CADEIA){
-			throw new SemanticError("Métodos devem ser de tipo pré-definido", token.getPosition());
-		}else{
-			tipoMetodo = tipoAtual; 
+		if (tipoAtual == TipoVariavel.CADEIA) {
+			throw new SemanticError("Métodos devem ser de tipo pré-definido",
+					token.getPosition());
+		} else {
+			tipoMetodo = tipoAtual;
 		}
 	}
 
@@ -320,9 +333,10 @@ public class Semantico implements Constants {
 	}
 
 	public void acao128(Token token) throws SemanticError {
-		if(!ts.estaDeclarado(token.getLexeme(), nivelAtual)){
-			throw new SemanticError("“Identificador não declarado", token.getPosition());
-		}else{
+		if (!ts.estaDeclarado(token.getLexeme(), nivelAtual)) {
+			throw new SemanticError("“Identificador não declarado",
+					token.getPosition());
+		} else {
 			posID = ts.getPosicaoIDTS(token, nivelAtual);
 		}
 	}
@@ -345,14 +359,17 @@ public class Semantico implements Constants {
 
 	public void acao133(Token token) throws SemanticError {
 		Item item = ts.getElementoPosicao(posID);
-		if(item.getTipoCategoria() == Categoria.VARIAVEL || item.getTipoCategoria()  == Categoria.PARAMETRO){
-			if(item.getTipoSubCategoria() == SubCategoria.VETOR){
-				throw new SemanticError("Id deveria ser indexado", token.getPosition());
-			}else{
+		if (item.getTipoCategoria() == Categoria.VARIAVEL
+				|| item.getTipoCategoria() == Categoria.PARAMETRO) {
+			if (item.getTipoSubCategoria() == SubCategoria.VETOR) {
+				throw new SemanticError("Id deveria ser indexado",
+						token.getPosition());
+			} else {
 				tipoLadoEsquerdo = item.getTipo();
 			}
-		}else{
-			throw new SemanticError("Id deveria ser variavel ou parametro", token.getPosition());
+		} else {
+			throw new SemanticError("Id deveria ser variavel ou parametro",
+					token.getPosition());
 		}
 	}
 
@@ -383,13 +400,23 @@ public class Semantico implements Constants {
 	public void acao140(Token token) throws SemanticError {
 
 	}
-	//Continuar!!!!
+
+	// Continuar!!!!
 	public void acao141(Token token) throws SemanticError {
-		if(contextoEXPR == ContextoLID.PARAMETRO_ATUAL){
-			NPA++;
+		/*if(contextoEXPR == ContextoLID.PARAMETRO_ATUAL){
 			Item metodo = pilhaMetodos.peek();
+			Item argumento = ts.getIdNomePosicao(token.getLexeme(), nivelAtual);
+			if(NPF == 0){
+				
+			}else if (OpUnario) {
+				
+			}else if () {
+				
+			}
+				
 			
-		}
+			NPA++;
+		}*/
 	}
 
 	public void acao142(Token token) {
@@ -449,61 +476,174 @@ public class Semantico implements Constants {
 	}
 
 	public void acao156(Token token) {
-
+		tipoTermo.push(tipoFator);
 	}
 
 	public void acao157(Token token) throws SemanticError {
+		switch (operadorAtual) {
+		case ADICAO:
+			if (tipoTermo.peek() != TipoVariavel.INTEIRO
+					|| tipoTermo.peek() != TipoVariavel.REAL) {
+				throw new SemanticError("Operandos incompatíveis”",
+						token.getPosition());
+			}
+			break;
 
+		case SUBTRACAO:
+			if (tipoTermo.peek() != TipoVariavel.INTEIRO
+					|| tipoTermo.peek() != TipoVariavel.REAL) {
+				throw new SemanticError("Operandos incompatíveis”",
+						token.getPosition());
+			}
+			break;
+
+		case MULTIPLICACAO:
+			if (tipoTermo.peek() != TipoVariavel.INTEIRO
+					|| tipoTermo.peek() != TipoVariavel.REAL) {
+				throw new SemanticError("Operandos incompatíveis”",
+						token.getPosition());
+			}
+			break;
+
+		case DIVISAO:
+			if (tipoTermo.peek() != TipoVariavel.INTEIRO
+					|| tipoTermo.peek() != TipoVariavel.REAL) {
+				throw new SemanticError("Operandos incompatíveis”",
+						token.getPosition());
+			}
+			break;
+		case E:
+			if (tipoTermo.peek() != TipoVariavel.BOOLEANO) {
+				throw new SemanticError("Operandos incompatíveis”",
+						token.getPosition());
+			}
+			break;
+		case OU:
+			if (tipoTermo.peek() != TipoVariavel.BOOLEANO) {
+				throw new SemanticError("Operandos incompatíveis”",
+						token.getPosition());
+			}
+			break;
+		case DIV:
+			if (tipoTermo.peek() != TipoVariavel.INTEIRO) {
+				throw new SemanticError("Operandos incompatíveis”",
+						token.getPosition());
+			}
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	public void acao158(Token token) throws SemanticError {
+		boolean operavel = false;
 
+		TipoVariavel t1 = tipoTermo.pop();
+		TipoVariavel t2 = tipoTermo.pop();
+
+		switch (operadorAtual) {
+		case ADICAO:
+			if (t1 == TipoVariavel.INTEIRO || t1 == TipoVariavel.REAL) {
+				if (t2 == TipoVariavel.INTEIRO || t2 == TipoVariavel.REAL) {
+					operavel = true;
+				}
+			}
+			break;
+		case DIVISAO:
+			if (t1 == TipoVariavel.INTEIRO || t1 == TipoVariavel.REAL) {
+				if (t2 == TipoVariavel.INTEIRO || t2 == TipoVariavel.REAL) {
+					operavel = true;
+				}
+			}
+			break;
+		case DIV:
+			operavel = (t1 == TipoVariavel.INTEIRO && t2 == TipoVariavel.INTEIRO);
+			break;
+		case MULTIPLICACAO:
+			if (t1 == TipoVariavel.INTEIRO || t1 == TipoVariavel.REAL) {
+				if (t2 == TipoVariavel.INTEIRO || t2 == TipoVariavel.REAL) {
+					operavel = true;
+				}
+			}
+			break;
+		case E:
+			operavel = (t1 == TipoVariavel.BOOLEANO && t2 == TipoVariavel.BOOLEANO);
+			break;
+
+		case OU:
+			operavel = (t1 == TipoVariavel.BOOLEANO && t2 == TipoVariavel.BOOLEANO);
+			break;
+
+		case SUBTRACAO:
+			if (t1 == TipoVariavel.INTEIRO || t1 == TipoVariavel.REAL) {
+				if (t2 == TipoVariavel.INTEIRO || t2 == TipoVariavel.REAL) {
+					operavel = true;
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		if (operavel) {
+
+		} else {
+			throw new SemanticError("Operadores não são compatíveis",
+					token.getPosition());
+		}
 	}
 
 	public void acao159(Token token) {
-
+		operadorAtual = Operador.MULTIPLICACAO;
 	}
 
 	public void acao160(Token token) {
-
+		operadorAtual = Operador.DIVISAO;
 	}
 
 	public void acao161(Token token) {
-
+		operadorAtual = Operador.E;
 	}
 
 	public void acao162(Token token) {
-
+		operadorAtual = Operador.DIV;
 	}
 
 	public void acao163(Token token) throws SemanticError {
-		if(opNega){
-			throw new SemanticError("Operação 'não' repetido - não pode!", token.getPosition());
-		}else{
+		if (opNega) {
+			throw new SemanticError("Operação 'não' repetido - não pode!",
+					token.getPosition());
+		} else {
 			opNega = true;
 		}
 	}
 
 	public void acao164(Token token) throws SemanticError {
-		if(tipoFator != TipoVariavel.BOOLEANO){
-			throw new SemanticError("Operação 'não' exige operando booleano", token.getPosition());
-		}else{
+		if (tipoFator != TipoVariavel.BOOLEANO) {
+			throw new SemanticError("Operação 'não' exige operando booleano",
+					token.getPosition());
+		} else {
 			opNega = false;
 		}
 	}
 
 	public void acao165(Token token) throws SemanticError {
-		if(OpUnario){
-			throw new SemanticError("Operador Unário repetido", token.getPosition());
-		}else{
+		if (OpUnario) {
+			throw new SemanticError("Operador Unário repetido",
+					token.getPosition());
+		} else {
 			OpUnario = true;
 		}
 	}
 
 	public void acao166(Token token) throws SemanticError {
-		if(tipoFator != TipoVariavel.INTEIRO || tipoFator != TipoVariavel.REAL){
-			throw new SemanticError("Operador Unário exige exige operando numero", token.getPosition());
-		}else{
+		if (tipoFator != TipoVariavel.INTEIRO || tipoFator != TipoVariavel.REAL) {
+			throw new SemanticError(
+					"Operador Unário exige exige operando numero",
+					token.getPosition());
+		} else {
 			OpUnario = false;
 		}
 	}
@@ -527,12 +667,14 @@ public class Semantico implements Constants {
 	public void acao171(Token token) throws SemanticError {
 		Item item = ts.getIdNomePosicao(token.getLexeme(), nivelAtual);
 		pilhaMetodos.push(item);
-		if(item.getTipoCategoria() != Categoria.METODO ){
-			throw new SemanticError("id deveria ser um metodo", token.getPosition());
-		}else{
-			if(tipoMetodo == TipoVariavel.NULO){
-				throw new SemanticError("Esperava-se método com tipo", token.getPosition());
-			}else{
+		if (item.getTipoCategoria() != Categoria.METODO) {
+			throw new SemanticError("id deveria ser um metodo",
+					token.getPosition());
+		} else {
+			if (tipoMetodo == TipoVariavel.NULO) {
+				throw new SemanticError("Esperava-se método com tipo",
+						token.getPosition());
+			} else {
 				NPA = 0;
 				contextoEXPR = ContextoLID.PARAMETRO_ATUAL;
 			}

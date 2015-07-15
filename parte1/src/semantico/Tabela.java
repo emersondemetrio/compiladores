@@ -100,15 +100,17 @@ public class Tabela {
 		return resultado;
 	}
 
-	public int getPosicaoIDTS(Token token,int nivel) {
+	public int getPosicaoIDTS(Token token, int nivel) {
 		int posicao = 0;
 		for (int i = 0; i < tabela.size(); i++) {
-			if (tabela.get(i).getNome() == token.getLexeme() && tabela.get(i).getNivel() == nivel) {
+			if (tabela.get(i).getNome() == token.getLexeme()
+					&& tabela.get(i).getNivel() == nivel) {
 				posicao = i;
 				break;
 			}
 		}
-		System.out.println("posicao do ID na tabela Simbolo::         " + posicao);
+		System.out.println("posicao do ID na tabela Simbolo::         "
+				+ posicao);
 		return posicao;
 	}
 
@@ -126,5 +128,33 @@ public class Tabela {
 
 	public void setTipoMetodo(TipoVariavel tipoMetodo) {
 		this.tipoMetodo = tipoMetodo;
+	}
+
+	public boolean tiposCompativeis(TipoVariavel t1, TipoVariavel t2) {
+		boolean compativel = false;
+		switch (t1) {
+		case INTEIRO:
+			compativel = (t2 == TipoVariavel.REAL) || (t2 == TipoVariavel.INTEIRO);
+			break;
+
+		case REAL:
+			compativel = (t2 == TipoVariavel.REAL) || (t2 == TipoVariavel.INTEIRO);
+			break;
+
+		case BOOLEANO:
+			compativel = (t2 == TipoVariavel.BOOLEANO);
+			break;
+
+		case CARACTER:
+			compativel = (t2 == TipoVariavel.CARACTER);
+			break;
+
+		case CADEIA:
+			compativel = (t2 == TipoVariavel.CADEIA) || (t2 == TipoVariavel.CARACTER);
+			break;
+		default:
+			break;
+		}
+		return compativel;
 	}
 }
