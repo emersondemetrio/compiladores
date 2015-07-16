@@ -10,7 +10,6 @@ public class Item {
 	private SubCategoria tipoSubCategoria;
 	private String valor;
 	private TipoParametro MPP;
-
 	private int tamanho;
 
 	public Item() {
@@ -29,17 +28,18 @@ public class Item {
 		this.tipoCategoria = categoria;
 		this.nome = nome;
 		this.nivel = nivel;
+		this.setTipo(tipoVariavel);
 	}
 
 	// id variavel
 	public Item(Categoria categoria, String nome, int nivel, int deslocamento,
-			SubCategoria subcategoria) {
+			SubCategoria subcategoria, TipoVariavel tipo) {
 		this.tipoCategoria = categoria;
 		this.nome = nome;
 		this.nivel = nivel;
 		this.deslocamento = deslocamento;
 		this.tipoSubCategoria = subcategoria;
-
+		this.tipo = tipo;
 	}
 
 	// id metodo
@@ -55,15 +55,11 @@ public class Item {
 		this.tipoCategoria = categoria;
 		this.nome = nome;
 		this.nivel = nivel;
-		this.deslocamento = deslocamento;
 	}
-	
-	
 
 	public String getNome() {
 		return nome;
 	}
-	
 
 	public void setNome(String nome) {
 		this.nome = nome;
@@ -122,6 +118,7 @@ public class Item {
 	}
 
 	public void setTipo(TipoVariavel tipo) {
+		System.out.println("SetTipoVariavel: " + tipo);
 		this.tipo = tipo;
 	}
 
@@ -131,5 +128,13 @@ public class Item {
 
 	public void setMPP(TipoParametro mPP) {
 		MPP = mPP;
+	}
+
+	public String toString() {
+		return "\n--------------------------\nItem " + "\nNome : " + nome + "\nNível : " + nivel
+				+ "\nDeslocamento : " + deslocamento + "\nTipo : " + tipo
+				+ "\ntipoCategoria : " + tipoCategoria
+				+ "\ntipoSubCategoria : " + tipoSubCategoria + "\nValor : "
+				+ valor + "\nMPP : " + MPP + "\nTamanho : " + tamanho + "\n--------------------------\n";
 	}
 }

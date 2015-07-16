@@ -4,6 +4,7 @@ import gals.Token;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Stack;
 
 public class Tabela {
 
@@ -12,12 +13,15 @@ public class Tabela {
 	private int ultimaPosicaoLID;
 	private int NPF;
 	private TipoVariavel tipoMetodo;
+	private Stack<Item> pilhaIDs;
 
 	public Tabela() {
 		tabela = new ArrayList<Item>();
+		pilhaIDs = new Stack<Item>();
 	}
 
 	public void addItem(Item identificador) {
+		pilhaIDs.push(identificador);
 		tabela.add(identificador);
 	}
 
@@ -39,6 +43,19 @@ public class Tabela {
 
 	public int retornaTamanho() {
 		return this.tabela.size();
+	}
+
+	public Item getIdNomePosicaoNivelMenor(String nome, int nivel) {
+		
+		for (Item r : this.getTabela()) {
+			if (r.getNome().equals(nome)) {
+				if (r.getNivel() <= nivel) {
+					return r;
+				}
+			}
+		}
+		//System.exit(0);
+		return null;
 	}
 
 	public Item getIdNomePosicao(String nome, int nivel) {
@@ -77,13 +94,30 @@ public class Tabela {
 		this.ultimaPosicaoLID = ultimaPosicaoLID;
 	}
 
+	public boolean estaDeclaradoNivelMenor(String lexeme, int nivel) {
+		for (Item temp : tabela) {
+			if (temp.getNivel() <= nivel) {
+				if (temp.getNome().equals(lexeme)) {
+					System.out.println("Comp: " + lexeme + "  "
+							+ temp.getNome() + " = TRUE");
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public boolean estaDeclarado(String lexeme, int nivel) {
 		for (Item temp : tabela) {
 			if (temp.getNivel() == nivel) {
 				if (temp.getNome().equals(lexeme)) {
+					System.out.println("Comp: " + lexeme + "  "
+							+ temp.getNome() + " = TRUE");
 					return true;
+
 				}
 			}
+
 		}
 		return false;
 	}
@@ -103,14 +137,13 @@ public class Tabela {
 	public int getPosicaoIDTS(Token token, int nivel) {
 		int posicao = 0;
 		for (int i = 0; i < tabela.size(); i++) {
-			if (tabela.get(i).getNome() == token.getLexeme()
+			if (tabela.get(i).getNome().equals(token.getLexeme())
 					&& tabela.get(i).getNivel() == nivel) {
 				posicao = i;
 				break;
 			}
 		}
-		System.out.println("posicao do ID na tabela Simbolo::         "
-				+ posicao);
+		System.out.println("posicao do ID na tabela Simbolo: " + posicao);
 		return posicao;
 	}
 
@@ -134,11 +167,13 @@ public class Tabela {
 		boolean compativel = false;
 		switch (t1) {
 		case INTEIRO:
-			compativel = (t2 == TipoVariavel.REAL) || (t2 == TipoVariavel.INTEIRO);
+			compativel = (t2 == TipoVariavel.REAL)
+					|| (t2 == TipoVariavel.INTEIRO);
 			break;
 
 		case REAL:
-			compativel = (t2 == TipoVariavel.REAL) || (t2 == TipoVariavel.INTEIRO);
+			compativel = (t2 == TipoVariavel.REAL)
+					|| (t2 == TipoVariavel.INTEIRO);
 			break;
 
 		case BOOLEANO:
@@ -150,11 +185,20 @@ public class Tabela {
 			break;
 
 		case CADEIA:
-			compativel = (t2 == TipoVariavel.CADEIA) || (t2 == TipoVariavel.CARACTER);
+			compativel = (t2 == TipoVariavel.CADEIA)
+					|| (t2 == TipoVariavel.CARACTER);
 			break;
 		default:
 			break;
 		}
 		return compativel;
+	}
+
+	public Stack<Item> getPilhaIDs() {
+		return pilhaIDs;
+	}
+
+	public void setPilhaIDs(Stack<Item> pilhaIDs) {
+		this.pilhaIDs = pilhaIDs;
 	}
 }

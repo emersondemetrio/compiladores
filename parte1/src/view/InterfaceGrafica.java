@@ -24,6 +24,45 @@ import controller.Controlador;
 
 public class InterfaceGrafica extends javax.swing.JFrame {
 
+	private String pteste = ""
+			+ "programa p3; \n"
+			+ "inteiro [ 3 ] z;\n"
+			+ "inteiro x, y, i; \n"
+			
+			+ "metodo processa; \n"
+			+ "\n"
+			+ "metodo exp : inteiro; \n"
+			+ "inteiro i, aux; \n"
+			+ "{\n"
+			+ "		i := 2;\n"
+			+ "		aux := x;\n"
+			+ "		enquanto i <= y\n"
+			+ "\n"
+			+ "		faca {\n"
+			+ "			aux := aux * x;\n"
+			+ "			i:=i + 1;\n"
+			+ "		}; \n"
+			+ "		retorne aux;\n"
+			+ "	};"
+			+ "\n"
+			+ "{\n"
+			
+			+ "};\n"
+			
+			+ "{\n"
+			+ "i := 1;\n"
+			+ "enquanto i <= 3\n"
+			+ "    faca {"
+			+ "\n"
+			+ "        leia (x, y);\n"
+			+ "	       processa;\n"
+			+ "	       i:=i+1\n"
+			+ "	   }"
+			+ "\n"
+			+ "}"
+			+ "\n"
+			+ ".";
+	
 	private static final long serialVersionUID = 1L;
 	private Controlador controlador;
 	private ParserConstants pc;
@@ -32,11 +71,11 @@ public class InterfaceGrafica extends javax.swing.JFrame {
 		initComponents();
 		setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
 		controlador = new Controlador();
-		textAreaCodigo.setText("programa teste; inteiro teste = 10; {} .");
+		textAreaCodigo.setText(pteste);
 	}
 
 	private static void log(String msg) {
-		System.out.println("[InterfaceGrafica.java] " + msg);
+		//System.out.println("[InterfaceGrafica.java] " + msg);
 	}
 
 	private static void msg(String msg, String titulo, int tipo) {
