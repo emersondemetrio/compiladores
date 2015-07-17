@@ -118,7 +118,6 @@ public class Item {
 	}
 
 	public void setTipo(TipoVariavel tipo) {
-		System.out.println("SetTipoVariavel: " + tipo);
 		this.tipo = tipo;
 	}
 
@@ -131,10 +130,11 @@ public class Item {
 	}
 
 	public String toString() {
-		return "\n--------------------------\nItem " + "\nNome : " + nome + "\nNível : " + nivel
-				+ "\nDeslocamento : " + deslocamento + "\nTipo : " + tipo
-				+ "\ntipoCategoria : " + tipoCategoria
+		return "\n--------------------------\nItem " + "\nNome : " + nome
+				+ "\nNível : " + nivel + "\nDeslocamento : " + deslocamento
+				+ "\nTipo : " + tipo + "\ntipoCategoria : " + tipoCategoria
 				+ "\ntipoSubCategoria : " + tipoSubCategoria + "\nValor : "
-				+ valor + "\nMPP : " + MPP + "\nTamanho : " + tamanho + "\n--------------------------\n";
+				+ valor + "\nMPP : " + MPP + "\nTamanho : " + tamanho
+				+ "\n--------------------------\n";
 	}
 }

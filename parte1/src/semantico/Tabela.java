@@ -45,8 +45,21 @@ public class Tabela {
 		return this.tabela.size();
 	}
 
+	public Item existe(String nome) {
+		System.out.println("Buscando: " + nome + "\n---");
+		for (Item i : this.getTabela()) {
+			/*System.out.println("Item: " + i.getNome() + "\nTipo: " + i.getTipo()
+					+ "\nNivel: " + i.getNivel() + "\nDeslocamento: " + i.getDeslocamento());*/
+			if (nome.equalsIgnoreCase(i.getNome())) {
+				return i;
+			}
+		}
+
+		return null;
+	}
+
 	public Item getIdNomePosicaoNivelMenor(String nome, int nivel) {
-		
+
 		for (Item r : this.getTabela()) {
 			if (r.getNome().equals(nome)) {
 				if (r.getNivel() <= nivel) {
@@ -54,7 +67,7 @@ public class Tabela {
 				}
 			}
 		}
-		//System.exit(0);
+		// System.exit(0);
 		return null;
 	}
 
