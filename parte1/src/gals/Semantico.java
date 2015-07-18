@@ -91,8 +91,8 @@ public class Semantico implements Constants {
 	 * ocupa 1 célula para cada elemento)
 	 */
 	public void acao104(Token token) {
-		
-		for(int i = ts.getPrimeiraPosicaoLID() + 1; i < ts.getTabela().size(); i++){
+
+		for (int i = ts.getPrimeiraPosicaoLID() + 1; i < ts.getTabela().size(); i++) {
 			ts.getTabela().get(i).setTipoCategoria(categoriaAtual);
 			ts.getTabela().get(i).setTipoSubCategoria(subCategoria);
 			ts.getTabela().get(i).setTipo(tipoAtual);
@@ -106,20 +106,17 @@ public class Semantico implements Constants {
 				deslocamentoAtual++;
 			}
 		}
-	/*	for (Item atual : ts.getTabela()) {
-			atual.setTipoCategoria(categoriaAtual);
-			atual.setTipoSubCategoria(subCategoria);
-			atual.setTipo(tipoAtual);
-
-			if (atual.getTipoCategoria() == Categoria.VARIAVEL
-					&& atual.getTipoSubCategoria() == SubCategoria.VETOR) {
-				pilhaDeslocamento.add(numElementos);
-				deslocamentoAtual = numElementos;
-			} else {
-				pilhaDeslocamento.add(1);
-				deslocamentoAtual++;
-			}
-		}*/
+		/*
+		 * for (Item atual : ts.getTabela()) {
+		 * atual.setTipoCategoria(categoriaAtual);
+		 * atual.setTipoSubCategoria(subCategoria); atual.setTipo(tipoAtual);
+		 * 
+		 * if (atual.getTipoCategoria() == Categoria.VARIAVEL &&
+		 * atual.getTipoSubCategoria() == SubCategoria.VETOR) {
+		 * pilhaDeslocamento.add(numElementos); deslocamentoAtual =
+		 * numElementos; } else { pilhaDeslocamento.add(1); deslocamentoAtual++;
+		 * } }
+		 */
 	}
 
 	/*
@@ -271,10 +268,6 @@ public class Semantico implements Constants {
 			ts.addItem(novo);
 			NPF = 0;
 			nivelAtual++;
-			if (token.getLexeme() == "processa") {
-				log(novo.toString());
-				System.exit(0);
-			}
 		}
 	}
 
@@ -283,7 +276,8 @@ public class Semantico implements Constants {
 	}
 
 	public void acao119(Token token) {
-		Item item = ts.getIdNomePosicaoNivelMenor(token.getLexeme(), nivelAtual);
+		Item item = ts
+				.getIdNomePosicaoNivelMenor(token.getLexeme(), nivelAtual);
 		item.setTipoCategoria(Categoria.METODO);
 	}
 
